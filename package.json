@@ -1,0 +1,11 @@
+{
+  "name": "wibandwob-pachipachi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types src/server.ts",
+    "dev:watch": "node --watch --experimental-strip-types src/server.ts",
+    "test": "node --experimental-strip-types --test"
+  }
+}
