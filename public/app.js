@@ -562,12 +562,38 @@ async function triggerScramble(reason) {
   state.scrambleVisible = true;
   renderGrid();
   const line = catLines[Math.floor(Math.random() * catLines.length)];
-  pushSubtitle('scramble', reason === 'clap' ? `${line} (👏)` : line);
+  const displayLine = reason === 'clap' ? `${line} (👏)` : line;
+  pushSubtitle('scramble', displayLine);
   renderSubtitles();
+
+  // Fetch and play Scramble's voice
+  playScrambleVoice(line);
+
   setTimeout(() => {
     state.scrambleVisible = false;
     renderGrid();
   }, 4200);
+}
+
+async function playScrambleVoice(text) {
+  try {
+    const resp = await fetch('/api/scramble-tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data.audio?.value) {
+      const mime = data.audio.mime || 'audio/mpeg';
+      const src = `data:${mime};base64,${data.audio.value}`;
+      const audio = new Audio(src);
+      audio.volume = 0.6;
+      await audio.play();
+    }
+  } catch (err) {
+    console.warn('Scramble voice failed:', err);
+  }
 }
 
 function scheduleIdleScramble() {

@@ -46,6 +46,25 @@ const server = createServer(async (req, res) => {
       return serveSample(url.pathname, res);
     }
 
+    if (req.method === 'POST' && url.pathname === '/api/scramble-tts') {
+      const payload = (await readJson(req)) as { text?: string };
+      const text = (payload.text ?? 'にゃ！').toString();
+      try {
+        if (!process.env.ELEVENLABS_API_KEY) {
+          return sendJson(res, 200, {
+            audio: { type: 'base64', mime: 'audio/wav', value: stubAudioBase64 },
+          });
+        }
+        const result = await fetchElevenAudio(text);
+        return sendJson(res, 200, { audio: result.audio });
+      } catch (err) {
+        console.error('Scramble TTS error:', err);
+        return sendJson(res, 200, {
+          audio: { type: 'base64', mime: 'audio/wav', value: stubAudioBase64 },
+        });
+      }
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/chat') {
       const payload = (await readJson(req)) as ChatRequest;
       try {
