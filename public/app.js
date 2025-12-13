@@ -406,7 +406,7 @@ async function createFaceLandmarker() {
       },
       outputFaceBlendshapes: false,
       runningMode: 'VIDEO',
-      numFaces: 1,
+      numFaces: 2,
     });
     console.log('[cam] FaceLandmarker ready');
     return landmarker;

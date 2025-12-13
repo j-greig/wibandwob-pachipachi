@@ -139,6 +139,7 @@ async function buildChatResponse(payload: ChatRequest) {
 
   return {
     reply_ja: anthropicReply.reply_ja,
+    reply_en: anthropicReply.reply_en,
     audio: elevenAudio.audio,
     timestamps: elevenAudio.timestamps ?? [],
     meta: {
