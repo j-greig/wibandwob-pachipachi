@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Wib&Wob Pachi Pachi Kun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen flex flex-col text-base text-black bg-[#f8f8f8] font-mono">
+    <div id="debug-panel" class="fixed top-2 right-2 z-50 text-[11px] font-mono bg-gray-200 text-black p-2 rounded border border-black max-w-[200px]">
+      <div id="dbg-cam">cam: idle</div>
+      <div id="dbg-ear">ear: --</div>
+      <div id="dbg-blink">blink: 0</div>
+      <div id="dbg-faces">faces: --</div>
+      <div id="dbg-eyes">eyes: 👁️👁️👁️👁️</div>
+      <div id="dbg-mouth">mouth: closed (0.00)</div>
+      <div id="dbg-clap">clap: --</div>
+      <div id="dbg-hands">hands: --</div>
+      <div id="dbg-mic">mic: off</div>
+      <div id="dbg-status">status: ready</div>
+    </div>
+    <button id="debug-toggle" class="fixed top-2 right-[210px] z-50 text-[11px] bg-gray-300 text-black px-2 py-1 rounded border border-black" type="button">dbg</button>
+    <main class="flex-1 flex flex-col items-center gap-4 px-4 pb-28 pt-6">
+      <div class="w-full flex justify-center h-[50vh] items-center">
+        <pre
+          id="kun-grid"
+          class="text-5xl md:text-6xl leading-none text-center select-none whitespace-pre"
+          aria-label="Kun avatar"
+        ></pre>
+      </div>
+      <div id="subtitle-stack" class="w-full max-w-5xl flex-1 flex flex-col justify-end"></div>
+      <div class="w-full max-w-5xl flex gap-3 items-center">
+        <button
+          id="mic-btn"
+          class="border-2 border-black px-3 py-2 text-sm bg-white"
+          type="button"
+        >
+          Mic (clap)
+        </button>
+        <button
+          id="cam-btn"
+          class="border-2 border-black px-3 py-2 text-sm bg-white"
+          type="button"
+        >
+          Camera (blink)
+        </button>
+        <span id="status" class="text-sm text-gray-700">Ready</span>
+        <button
+          id="export-btn"
+          class="border border-black px-2 py-1 text-sm bg-white"
+          type="button"
+        >
+          Save chat
+        </button>
+        <button
+          id="scramble-btn"
+          class="border border-gray-400 px-2 py-1 text-sm bg-white"
+          type="button"
+        >
+          Summon Scramble
+        </button>
+      </div>
+    </main>
+
+    <form
+      id="chat-form"
+      class="fixed bottom-0 left-0 right-0 bg-white border-t border-black px-4 py-3"
+    >
+      <div class="w-[80vw] max-w-5xl mx-auto flex gap-2">
+        <input
+          id="chat-input"
+          class="flex-1 border-2 border-black px-3 py-2 text-base bg-white"
+          type="text"
+          placeholder="Type and press Enter to send"
+          autocomplete="off"
+        />
+        <button
+          class="border-2 border-black px-4 py-2 bg-black text-white text-base"
+          type="submit"
+        >
+          Send
+        </button>
+      </div>
+    </form>
+    <video id="cam-stream" playsinline muted class="hidden"></video>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
