@@ -171,11 +171,12 @@ Pulses are drawn from these via `buildPulseSchedule()`, with optional jitter (±
 
 **MediaPipe Face Tracking:** Uses FaceLandmarker (v0.10.8) to measure Eye Aspect Ratio (EAR). Blink thresholds: open 0.26, close 0.21. When camera is unavailable or permission denied, falls back to idle blink animation.
 
-### Scramble Effect & Hand Detection
+### Scramble Effect & Clap Detection
 
 Triggered by:
 1. **Emotion**: `scramble_chance` from Anthropic response (e.g., 0.15–0.42)
-2. **Hand clap detection**: MediaPipe Hands detects hand landmarks; distance <0.12 between key points (e.g., thumb-to-finger) triggers clap
+2. **Microphone clap detection**: Frequency-domain analysis; measures ratio of high-frequency energy (2–4 kHz, bins 16–32) to low-frequency baseline (bins 0–8). Claps trigger when ratio > 2.0 (debounced 500ms). Threshold is tunable per environment.
+3. **Hand clap detection**: MediaPipe Hands detects hand landmarks; distance <0.12 between key points (e.g., thumb-to-finger) triggers clap
 
 Effect: text rendered with random character substitution and opacity flicker for 400–800ms.
 
