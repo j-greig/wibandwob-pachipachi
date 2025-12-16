@@ -1,7 +1,7 @@
 # Wib&Wob Pachi Pachi Tasks
 
 ## Todo
-[ ] Make the core Pachi Pachi prompt more interesting eg devlop a story/worldview for the character
+[ ] Make the core Pachi Pachi prompt more interesting eg devlop a story/worldview for the character  
 [ ] Fix face detection to allow 2 people to be tracked at once, so that each pair of eyes on the Pachi-Pachi blinks indepentlay if 2 humans visible in webcam 
 
 ## Doing

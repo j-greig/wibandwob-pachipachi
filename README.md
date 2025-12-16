@@ -4,6 +4,8 @@
 
 Playful two-headed emoji avatar that chats in Japanese. Blinks, claps, mouths along to speech. Real-time animation synced to audio energy. MediaPipe face/hand tracking optional. Anthropic Claude for chat, ElevenLabs for TTS.
 
+See [workings/TODO.md](workings/TODO.md) for the feature wishlist.
+
 ## Quick Start
 
 ```bash
