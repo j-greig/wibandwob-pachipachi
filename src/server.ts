@@ -135,12 +135,16 @@ server.listen(port, () => {
 async function buildChatResponse(payload: ChatRequest) {
   const userText = (payload.userText ?? '').toString().trim();
   const history = payload.history ?? [];
+  console.log(`\n📨 Chat request: "${userText.slice(0, 50)}${userText.length > 50 ? '...' : ''}" (history: ${history.length})`);
 
   const missingAnthropic = !process.env.ANTHROPIC_API_KEY;
   const missingEleven = !process.env.ELEVENLABS_API_KEY;
 
   if (missingAnthropic || missingEleven) {
-    console.warn('Missing API keys; using fallback stub audio and text.');
+    const missing = [];
+    if (missingAnthropic) missing.push('ANTHROPIC_API_KEY');
+    if (missingEleven) missing.push('ELEVENLABS_API_KEY');
+    console.warn(`⚠️ Missing API keys: ${missing.join(', ')}. Using fallback stub audio and text.`);
     const replyText =
       userText.length > 0
         ? `了解だよ。「${userText}」だね！（キー未設定のためダミー）`
@@ -149,7 +153,7 @@ async function buildChatResponse(payload: ChatRequest) {
       reply_ja: replyText,
       audio: { type: 'base64', mime: 'audio/wav', value: stubAudioBase64 },
       timestamps: [],
-      meta: { source: 'fallback-missing-keys' },
+      meta: { source: 'fallback-missing-keys', reason: missing.join(', ') },
     };
   }
 
@@ -176,7 +180,11 @@ async function fetchAnthropicReply(
   history: Array<{ role: string; content: string }>,
 ) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY missing');
+  if (!apiKey) {
+    console.error('❌ ANTHROPIC_API_KEY is not set');
+    throw new Error('ANTHROPIC_API_KEY missing');
+  }
+  console.log(`📤 Calling Anthropic API (${history.length} history items)...`);
 
   const systemPrompt =
     'You are Pachi-Pachi, a cute two-headed Japanese-speaking character. A subgoal is to help English speakers learn a little Japanese through playful interaction. Always reply in strict JSON with keys reply_ja, reply_en (brief English gloss), emotion, scramble_chance. `emotion` must be one of: calm, excited, shy, smug. scramble_chance must be a float from 0.0 to 1.0 (probability). Keep reply_ja short (1-4 lines). reply_en should be a natural gloss; optionally include a light, subtle teaching detail about the Japanese if it fits naturally. Example: {"reply_ja": "やっほー！", "reply_en": "Hey there!", "emotion": "calm", "scramble_chance": 0.25}';
@@ -208,12 +216,14 @@ g
 
   if (!resp.ok) {
     const text = await resp.text();
+    console.error(`❌ Anthropic API error: ${resp.status} ${text.slice(0, 200)}`);
     throw new Error(`Anthropic error: ${resp.status} ${text}`);
   }
 
   const json = (await resp.json()) as any;
   const rawText = json?.content?.[0]?.text?.toString() ?? '';
   const parsed = parseReplyJson(rawText);
+  console.log(`✅ Anthropic replied: emotion=${parsed.emotion}, scramble=${parsed.scramble_chance}`);
   return {
     reply_ja: parsed.reply_ja || 'やっほー！',
     reply_en: parsed.reply_en,
@@ -225,7 +235,11 @@ g
 
 async function fetchElevenAudio(text: string) {
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  if (!apiKey) throw new Error('ELEVENLABS_API_KEY missing');
+  if (!apiKey) {
+    console.error('❌ ELEVENLABS_API_KEY is not set');
+    throw new Error('ELEVENLABS_API_KEY missing');
+  }
+  console.log(`🎤 Calling ElevenLabs TTS for: "${text.slice(0, 50)}..."`);
   const body = {
     text,
     model_id: elevenModelId,
@@ -254,10 +268,12 @@ async function fetchElevenAudio(text: string) {
 
   if (!resp.ok) {
     const textBody = await resp.text();
+    console.error(`❌ ElevenLabs API error: ${resp.status} ${textBody.slice(0, 200)}`);
     throw new Error(`ElevenLabs error: ${resp.status} ${textBody}`);
   }
 
   const audioBuf = Buffer.from(await resp.arrayBuffer());
+  console.log(`✅ ElevenLabs generated audio: ${audioBuf.length} bytes`);
   return {
     audio: { type: 'base64', mime: 'audio/mpeg', value: audioBuf.toString('base64') },
     timestamps: [],
