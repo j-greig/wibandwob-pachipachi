@@ -541,10 +541,10 @@ function pollClaps() {
   const loop = () => {
     if (!state.mic.analyser) return;
     state.mic.analyser.getByteFrequencyData(freqData);
-    const freqRatio = computeFrequencyRatio(freqData);
-    state.debug.clapEnergy = freqRatio;
+    const highFreqEnergy = computeFrequencyRatio(freqData);
+    state.debug.clapEnergy = highFreqEnergy;
     const now = performance.now();
-    if (freqRatio > 2.0 && now - state.mic.lastClap > 500) {
+    if (highFreqEnergy > 0.15 && now - state.mic.lastClap > 500) {
       state.mic.lastClap = now;
       triggerScramble('clap');
     }
@@ -656,16 +656,13 @@ function computeEnergy(data) {
 }
 
 function computeFrequencyRatio(freqData) {
-  // Clap detection via frequency-domain analysis:
-  // High-frequency content (2–4 kHz, bins ~16–32) vs low-frequency baseline (bins 0–8).
-  // Claps have characteristic high-frequency burst; ratio > 2.0 indicates clap.
-  let lowSum = 0;
+  // Clap detection: measure high-frequency energy (2–4 kHz, bins ~16–32).
+  // Claps have strong presence in this range; trigger on absolute magnitude.
   let highSum = 0;
-  for (let i = 0; i < 8; i++) lowSum += freqData[i];
   for (let i = 16; i < 32; i++) highSum += freqData[i];
-  const lowAvg = lowSum / 8;
   const highAvg = highSum / 16;
-  return lowAvg > 0 ? highAvg / lowAvg : 0;
+  // Normalize to 0–1 range (FFT values 0–255)
+  return highAvg / 255;
 }
 
 function nextMouthState(energy, prev, thresholds) {
