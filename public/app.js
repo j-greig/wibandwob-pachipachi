@@ -582,6 +582,10 @@ async function mirrorClaps(count) {
   if (count === 0) return;
   console.log(`👏 Pachi-Pachi clapping ${count} times...`);
 
+  // Disable clap detection during playback to prevent feedback loop
+  const micLoopId = state.mic.loopId;
+  if (micLoopId) cancelAnimationFrame(micLoopId);
+
   // 1 second gap before starting mirror
   await new Promise(r => setTimeout(r, 1000));
 
@@ -593,6 +597,9 @@ async function mirrorClaps(count) {
     }
   }
   console.log(`✨ Mirror claps complete!`);
+
+  // Re-enable clap detection
+  if (state.mic.analyser) pollClaps();
 }
 
 async function triggerScramble(reason) {
