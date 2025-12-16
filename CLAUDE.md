@@ -92,7 +92,7 @@ The system is designed to work offline or with missing API keys. If either `ANTH
 **Anthropic prompt** (in `fetchAnthropicReply`):
 - System prompt instructs Claude to always return strict JSON with `reply_ja`, `reply_en`, `emotion`, `scramble_chance` keys
 - Chat history is forwarded in messages array for context
-- Temperature 0.6, max_tokens 200
+- Temperature 0.9, max_tokens 200
 
 **ElevenLabs integration**:
 - Multilingual model v2 by default
@@ -201,8 +201,8 @@ anthropic-version: 2023-06-01
 {
   "model": "claude-haiku-4-5",
   "max_tokens": 200,
-  "temperature": 0.6,
-  "system": "You are Kun... [JSON schema instructions]",
+  "temperature": 0.9,
+  "system": "You are Pachi-Pachi... [JSON schema instructions]",
   "messages": [
     { "role": "user", "content": "こんにちは" },
     { "role": "assistant", "content": "{...JSON...}" },
