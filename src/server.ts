@@ -21,9 +21,12 @@ const elevenVoiceId =
 const elevenModelId =
   process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
 const allowedSamples = new Set([
-  'clap_soft.wav',
-  'clap_mid.wav',
-  'clap_sharp.wav',
+  'clap-01.mp3',
+  'clap-02.mp3',
+  'clap-03.mp3',
+  'clap-04.mp3',
+  'clap-05.mp3',
+  'clap-06.mp3',
 ]);
 
 const mimeMap: Record<string, string> = {
@@ -33,6 +36,8 @@ const mimeMap: Record<string, string> = {
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav',
 };
 
 const server = createServer(async (req, res) => {
@@ -313,7 +318,8 @@ async function serveSample(pathname: string, res: ServerResponse) {
   try {
     const filePath = join(sampleDir, name);
     const content = await readFile(filePath);
-    res.writeHead(200, { 'Content-Type': 'audio/wav' });
+    const type = mimeMap[extname(name)] ?? 'audio/wav';
+    res.writeHead(200, { 'Content-Type': type });
     res.end(content);
   } catch (err) {
     console.error(err);

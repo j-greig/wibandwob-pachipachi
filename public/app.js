@@ -39,7 +39,14 @@ const ATTENTION_PATTERNS = [
 ];
 
 const catLines = ['にゃ！', 'ﾆｬﾝ!', 'にゃーん', 'ねむい…にゃ', 'ﾆｬ(=^･ω･^=)'];
-const CLAP_SOUNDS = ['/samples/clap_soft.wav', '/samples/clap_mid.wav', '/samples/clap_sharp.wav'];
+const CLAP_SOUNDS = [
+  '/samples/clap-01.mp3',
+  '/samples/clap-02.mp3',
+  '/samples/clap-03.mp3',
+  '/samples/clap-04.mp3',
+  '/samples/clap-05.mp3',
+  '/samples/clap-06.mp3',
+];
 
 const state = {
   mouth: 'open',
