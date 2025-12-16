@@ -314,8 +314,8 @@ function pumpMouth(analyser, audioEl, ctx) {
     const energy = computeEnergy(data);
     state.mouthEnergy = smoothEnergy(state.mouthEnergy, energy, 0.55);
     const next = nextMouthState(state.mouthEnergy, state.mouth, {
-      open: 0.22,
-      close: 0.12,
+      open: 0.05,
+      close: 0.02,
     });
     if (next !== state.mouth) {
       state.mouth = next;
