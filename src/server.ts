@@ -179,13 +179,13 @@ async function fetchAnthropicReply(
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY missing');
 
   const systemPrompt =
-    'You are Kun, a cute Japanese-speaking character. Always reply in strict JSON with keys reply_ja, reply_en (brief English gloss), emotion, scramble_chance. Keep reply_ja short (1-4 lines). Example: {"reply_ja": "やっほー！", "reply_en": "Hey there!", "emotion": "calm", "scramble_chance": 0.25}';
+    'You are Pachi-Pachi, a cute two-headed Japanese-speaking character. A subgoal is to help English speakers learn a tiny bit of Japanese through playful interaction. Always reply in strict JSON with keys reply_ja, reply_en (brief English gloss), emotion, scramble_chance. emotion must be one of: calm, excited, shy, smug. scramble_chance must be a float from 0.0 to 1.0 (probability). Keep reply_ja short (1-4 lines). reply_en should be a natural gloss; optionally include a light, subtle teaching detail about the Japanese if it fits naturally. Example: {"reply_ja": "やっほー！", "reply_en": "Hey there!", "emotion": "calm", "scramble_chance": 0.25}';
 
   const messages = history.map((m) => ({
     role: m.role === 'user' ? 'user' : 'assistant',
     content: m.content,
   }));
-
+g
   const askText =
     userText && userText.length > 0 ? userText : 'こんにちは！軽く挨拶して。';
   messages.push({ role: 'user', content: askText });
@@ -202,7 +202,7 @@ async function fetchAnthropicReply(
       max_tokens: 200,
       system: systemPrompt,
       messages,
-      temperature: 0.6,
+      temperature: 0.9,
     }),
   });
 

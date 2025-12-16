@@ -91,6 +91,9 @@ The system is designed to work offline or with missing API keys. If either `ANTH
 
 **Anthropic prompt** (in `fetchAnthropicReply`):
 - System prompt instructs Claude to always return strict JSON with `reply_ja`, `reply_en`, `emotion`, `scramble_chance` keys
+- `emotion` enum: `calm | excited | shy | smug`
+- `scramble_chance`: float from 0.0 to 1.0 (probability)
+- Subgoal: help English speakers learn a tiny bit of Japanese through playful interaction (light, natural teaching moments in `reply_en` where they fit)
 - Chat history is forwarded in messages array for context
 - Temperature 0.9, max_tokens 200
 
