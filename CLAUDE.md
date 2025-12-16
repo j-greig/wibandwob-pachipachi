@@ -173,12 +173,17 @@ Pulses are drawn from these via `buildPulseSchedule()`, with optional jitter (±
 
 ### Scramble Effect & Clap Detection
 
-Triggered by:
-1. **Emotion**: `scramble_chance` from Anthropic response (e.g., 0.15–0.42)
-2. **Microphone clap detection**: Frequency-domain analysis; measures absolute high-frequency energy (2–4 kHz, bins 16–32). Claps trigger when high-freq energy > 0.15 normalized (0–1 scale, debounced 500ms). Threshold tunable for different acoustic environments.
-3. **Hand clap detection**: MediaPipe Hands detects hand landmarks; distance <0.12 between key points (e.g., thumb-to-finger) triggers clap
+**Scramble effect** triggered by emotion:
+- `scramble_chance` from Anthropic response (e.g., 0.15–0.42)
+- Text rendered with random character substitution and opacity flicker for 400–800ms
 
-Effect: text rendered with random character substitution and opacity flicker for 400–800ms.
+**Clap mirroring** (interactive):
+1. **Microphone clap detection**: Frequency-domain analysis measures high-frequency energy (2–4 kHz, bins 16–32). Detects clap when energy > 0.08 normalized (0–1 scale, debounced 300ms).
+2. **Silence detection**: If no claps detected for 1.5s, the sequence is considered complete.
+3. **Mirroring**: Pachi-Pachi mirrors back the same number of claps with 1-second gap before starting and 500ms between each clap.
+4. **Hand clap detection** (optional): MediaPipe Hands detects hand gestures; distance <0.12 between landmarks (e.g., thumb-to-finger) also triggers clap.
+
+**Debugging**: Debug panel shows real-time clap energy level and accumulated clap count. Console logs each detected clap and mirroring action.
 
 ### Chat History
 

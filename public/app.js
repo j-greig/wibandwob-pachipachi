@@ -71,6 +71,11 @@ const state = {
     clapEnergy: 0,
     handDistance: 0,
   },
+  clap: {
+    count: 0,
+    lastDetectedAt: 0,
+    silenceTimeoutId: null,
+  },
 };
 
 let visionModulePromise = null;
@@ -538,20 +543,56 @@ function stopMic() {
 function pollClaps() {
   if (!state.mic.analyser) return;
   const freqData = new Uint8Array(state.mic.analyser.frequencyBinCount);
+  const CLAP_THRESHOLD = 0.08;
+  const SILENCE_TIMEOUT = 1500; // ms; if no claps detected in this time, consider sequence done
+  const DEBOUNCE_CLAP = 300; // ms; min time between clap detections
+
   const loop = () => {
     if (!state.mic.analyser) return;
     state.mic.analyser.getByteFrequencyData(freqData);
     const highFreqEnergy = computeFrequencyRatio(freqData);
     state.debug.clapEnergy = highFreqEnergy;
     const now = performance.now();
-    if (highFreqEnergy > 0.15 && now - state.mic.lastClap > 500) {
+
+    // Detect clap: high-freq energy spike + debounce
+    if (highFreqEnergy > CLAP_THRESHOLD && now - state.mic.lastClap > DEBOUNCE_CLAP) {
       state.mic.lastClap = now;
-      triggerScramble('clap');
+      state.clap.count++;
+      state.clap.lastDetectedAt = now;
+      console.log(`🎵 Clap detected! Count: ${state.clap.count}`);
+
+      // Reset silence timeout (keep extending it while claps continue)
+      if (state.clap.silenceTimeoutId) clearTimeout(state.clap.silenceTimeoutId);
+
+      // Set new silence timeout: if no more claps for SILENCE_TIMEOUT ms, mirror back
+      state.clap.silenceTimeoutId = setTimeout(() => {
+        console.log(`🤐 Silence detected. Mirroring ${state.clap.count} claps back...`);
+        mirrorClaps(state.clap.count);
+        state.clap.count = 0;
+      }, SILENCE_TIMEOUT);
     }
+
     updateDebugPanel();
     state.mic.loopId = requestAnimationFrame(loop);
   };
   loop();
+}
+
+async function mirrorClaps(count) {
+  if (count === 0) return;
+  console.log(`👏 Pachi-Pachi clapping ${count} times...`);
+
+  // 1 second gap before starting mirror
+  await new Promise(r => setTimeout(r, 1000));
+
+  for (let i = 0; i < count; i++) {
+    await playAttention();
+    if (i < count - 1) {
+      // 500ms gap between claps
+      await new Promise(r => setTimeout(r, 500));
+    }
+  }
+  console.log(`✨ Mirror claps complete!`);
 }
 
 async function triggerScramble(reason) {
@@ -597,7 +638,8 @@ async function playScrambleVoice(text) {
 }
 
 function scheduleIdleScramble() {
-  const delay = 12000 + Math.random() * 14000;
+  // Wait ~5–6.5 minutes before idle Scramble can appear
+  const delay = 300000 + Math.random() * 90000;
   setTimeout(() => {
     if (!state.scrambleVisible && Math.random() < 0.25) {
       triggerScramble('idle');
@@ -708,7 +750,7 @@ function updateDebugPanel() {
   if (dbg.faces) dbg.faces.textContent = renderFaceDebug(state.debug.faceCount);
   if (dbg.eyes) dbg.eyes.textContent = `eyes: ${renderEyeDebug()}`;
   dbg.mouth.textContent = `mouth: ${state.mouth} (${state.mouthEnergy.toFixed(2)})`;
-  dbg.clap.textContent = `clap energy: ${state.debug.clapEnergy.toFixed(2)}`;
+  dbg.clap.textContent = `clap: ${state.debug.clapEnergy.toFixed(2)} | count: ${state.clap.count}`;
   if (dbg.hands) {
     dbg.hands.textContent = `hands dist: ${state.debug.handDistance.toFixed(3) || '--'}`;
   }
