@@ -75,7 +75,7 @@ const state = {
 
 let visionModulePromise = null;
 
-const gridEl = document.getElementById('kun-grid');
+const gridEl = document.getElementById('pach-pachi-grid');
 const subtitleEl = document.getElementById('subtitle-stack');
 const statusEl = document.getElementById('status');
 const micBtn = document.getElementById('mic-btn');
@@ -121,7 +121,7 @@ formEl.addEventListener('submit', async (event) => {
     });
     if (!resp.ok) throw new Error('ネットワークエラー');
     const data = await resp.json();
-    pushSubtitle('kun', data.reply_ja || '…', data.reply_en);
+    pushSubtitle('pachi-pachi', data.reply_ja || '…', data.reply_en);
     renderSubtitles();
     setStatus('Preparing audio…');
     await playAttention();
@@ -130,7 +130,7 @@ formEl.addEventListener('submit', async (event) => {
     setStatus('Done');
   } catch (err) {
     console.error(err);
-    pushSubtitle('kun', '通信が不安定みたい…もう一回？');
+    pushSubtitle('pachi-pachi', '通信が不安定みたい…もう一回？');
     setStatus('Error');
   }
 });
