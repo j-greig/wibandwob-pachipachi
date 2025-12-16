@@ -193,7 +193,7 @@ async function fetchAnthropicReply(
     role: m.role === 'user' ? 'user' : 'assistant',
     content: m.content,
   }));
-g
+
   const askText =
     userText && userText.length > 0 ? userText : 'こんにちは！軽く挨拶して。';
   messages.push({ role: 'user', content: askText });
