@@ -225,7 +225,7 @@ function renderSubtitles() {
   const last = state.subtitles.slice(-6);
   last.forEach((item) => {
     const div = document.createElement('div');
-    const base = 'border-2 border-black p-3 mt-2';
+    const base = 'border-2 border-black p-3';
     const roleClass =
       item.role === 'scramble'
         ? 'bg-indigo-50 border-dashed'
@@ -234,6 +234,7 @@ function renderSubtitles() {
           : 'bg-white';
     div.className = `${base} ${roleClass}`;
     const ja = document.createElement('div');
+    ja.className = 'text-sm';
     ja.textContent = item.text;
     div.appendChild(ja);
     if (item.en) {

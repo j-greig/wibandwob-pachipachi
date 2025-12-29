@@ -9,8 +9,9 @@
     <title>Wib&Wob Pachi Pachi</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="min-h-screen flex flex-col text-base text-black bg-[#f8f8f8] font-mono">
-    <div id="debug-panel" class="fixed top-2 right-2 z-50 text-[11px] font-mono bg-gray-200 text-black p-2 rounded border border-black max-w-[200px]">
+  <body class="min-h-screen flex flex-col text-base text-black bg-[#f8f8f8] font-mono overflow-hidden">
+    <button id="debug-toggle" class="fixed top-2 right-2 z-50 text-[11px] bg-white text-gray-400 px-2 py-1 rounded border border-gray-300" type="button">dbg</button>
+    <div id="debug-panel" class="fixed top-2 right-12 z-50 text-[11px] font-mono bg-gray-200 text-black p-2 rounded border border-black max-w-[200px]">
       <div id="dbg-cam">cam: idle</div>
       <div id="dbg-ear">ear: --</div>
       <div id="dbg-blink">blink: 0</div>
@@ -22,17 +23,25 @@
       <div id="dbg-mic">mic: off</div>
       <div id="dbg-status">status: ready</div>
     </div>
-    <button id="debug-toggle" class="fixed top-2 right-[210px] z-50 text-[11px] bg-gray-300 text-black px-2 py-1 rounded border border-black" type="button">dbg</button>
-    <main class="flex-1 flex flex-col items-center gap-4 px-4 pb-28 pt-6">
-      <div class="w-full flex justify-center h-[50vh] items-center">
-        <pre
-          id="pach-pachi-grid"
-          class="text-5xl md:text-6xl leading-none text-center select-none whitespace-pre"
-          aria-label="pachi-pachi avatar"
-        ></pre>
-      </div>
-      <div id="subtitle-stack" class="w-full max-w-5xl flex-1 flex flex-col justify-end"></div>
-      <div class="w-full max-w-5xl flex gap-3 items-center">
+
+    <!-- Fixed avatar at top -->
+    <div class="w-full flex justify-center items-center py-4 bg-[#f8f8f8] border-b border-gray-300">
+      <pre
+        id="pach-pachi-grid"
+        class="text-xl md:text-2xl text-center select-none whitespace-pre"
+        style="line-height: 100%"
+        aria-label="pachi-pachi avatar"
+      ></pre>
+    </div>
+
+    <!-- Scrollable chat area -->
+    <main class="flex-1 flex flex-col items-center gap-4 px-4 overflow-y-scroll pb-2 pt-4">
+      <div id="subtitle-stack" class="w-full max-w-5xl flex flex-col" style="gap: 1px"></div>
+    </main>
+
+    <!-- Fixed controls above input -->
+    <div class="w-full border-t border-gray-300 bg-[#f8f8f8] px-4 py-2">
+      <div class="w-full max-w-5xl mx-auto flex gap-3 items-center">
         <button
           id="mic-btn"
           class="border-2 border-black px-3 py-2 text-sm bg-white"
@@ -63,7 +72,7 @@
           Summon Scramble
         </button>
       </div>
-    </main>
+    </div>
 
     <form
       id="chat-form"
@@ -72,13 +81,13 @@
       <div class="w-[80vw] max-w-5xl mx-auto flex gap-2">
         <input
           id="chat-input"
-          class="flex-1 border-2 border-black px-3 py-2 text-base bg-white"
+          class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white"
           type="text"
           placeholder="Type and press Enter to send"
           autocomplete="off"
         />
         <button
-          class="border-2 border-black px-4 py-2 bg-black text-white text-base"
+          class="border-2 border-black px-4 py-2 bg-black text-white text-sm"
           type="submit"
         >
           Send
